@@ -66,8 +66,20 @@ class FeedProc:
 #end FeedProc
 
 class AppendToTitle(FeedProc):
-    def parse_entries_title(self, title, full_item):
-        return "New title modification: %s %s" % (title, full_item['link'])
+    """Simple example processor.
+    Appends a string to the start of each feed title."""
+    def proc_entries_title(self, title, full_item):
+        return "This is a title modification. %s %s" % (title, full_item['link'])
 
-af = AppendToTitle("http://reddit.com/r/python/.rss")
-af()
+def main():
+    # Setup the AppendToTitle processor on the reddit python RSS feed
+    af = AppendToTitle("http://reddit.com/r/python/.rss")
+
+    # Run the processor, it returns a string with the new RSS feed
+    modified_feed = af()
+
+    # Output the new feed
+    print modified_feed
+
+if __name__ == '__main__':
+    main()
