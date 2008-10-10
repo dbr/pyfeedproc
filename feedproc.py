@@ -1,27 +1,30 @@
 #!/usr/bin/env python
+#encoding:utf-8
+#author:dbr/Ben
+#project:py-feedproc
+#repository:http://github.com/dbr/py-feedproc
+#license:Public Domain
+
 """
+This is a simple feed-processing framework, written in Python.
+
 Allows you to programatically modify an RSS feed. It uses feedparser to parse the feeds.
 
-You create a class, which extends FeedProc, with specifically named functions, for example, to remove all the letter "b" from the feed titles, you would do..
+Processors are classes, which inherent the FeedProc class. The processor uses specifically named functions to determine which item to modify. For example, proc_enteries_title will process each feed item's "title".
 
-class IHateB(FeedProc):
-    def parse_entries_title(title, full_item):
-        return title.replace("b", "")
+Each function is given two arguments, the first is the original value, the second is the entire element (with entries, this is the entire news <item>).
+Each function simply returns the desired new value.
 
-Whatever returned becomes the new title. This is ran on each feed entry.
+As a simple example processor, to truncate every RSS item's title to 20 characters:
 
-If you wish to process the feeds title, you would do..
+class ExampleProcessor(FeedProc):
+    proc_enteries_title(self, orig_title, full_item):
+        truncated_title = orig_title[20:]
+        return truncated_title
 
-class AppendToTitle(FeedProc):
-    def parse_feed_title(title, full_item):
-        return "%s (I added this to the title!)" % (title)
-
-The function name is important. parse_ is a prefix, entries is the part of the feedparser (the two useful ones are "entries" - the RSS feed items, and "feed" which has info about the feed, such as the feeds title)
-
-To run the AppendToTitle processor on a feed, you would do
-myproc = AppendToTitle("http://example.com/news.rss")
-myproc()
+The whole system is quite simple. It is intended to remove annoyances from RSS feeds, such as adverts, similar to what "Yahoo Pipes" is, but FeedProc is *much* simpler, does not depend on third-party servers proxying, and is much more flexible (it is Python, you can call anything you with form the processor)
 """
+
 import feedparser
 
 class FeedProc:
