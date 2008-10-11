@@ -26,6 +26,8 @@ The whole system is quite simple. It is intended to remove annoyances from RSS f
 """
 
 import feedparser
+import PyRSS2Gen
+import datetime
 
 class FeedProc:
     def __init__(self, url):
@@ -34,6 +36,8 @@ class FeedProc:
     def __call__(self):
         self._parse_feed()
         self._run_filters()
+        self._gen_modified_feed()
+        return self.xml
 
     def _parse_feed(self):
         self.feed = feedparser.parse(self.url)
@@ -41,22 +45,20 @@ class FeedProc:
     def _run_filters(self):
         for f_name in dir(self):
             # parse_entries_title
-            if f_name.find("parse_") == 0 and f_name[6:].find("_") > -1:
+            if f_name.find("proc_") == 0 and f_name[5:].find("_") > -1:
                 # entries
-                element_section = f_name[6 : f_name[6:].find("_") + 6  ]
+                element_section = f_name[5 : f_name[5:].find("_") + 5  ]
                 # title
                 element_name = f_name[f_name[6:].find("_") + 7 : ]
-
+                
                 if element_section in self.feed.keys():
-                    print "found section", element_section
-
-                    print "processing", element_name
-                    for feed_item in self.feed['entries']:
+                    for feed_item_index in xrange(len(self.feed['entries'])):
+                        feed_item = self.feed['entries'][feed_item_index]
                         orig_element = feed_item[element_name]
+                        
                         new_element = getattr(self, f_name)(orig_element,
                                                             feed_item)
-                        feed_item[element_name] = new_element
-                        print new_element
+                        self.feed['entries'][feed_item_index][element_name] = new_element
                     #end for feed_item
                 else:
                     print "Invalid section %s (in function name %s)" % (
@@ -65,14 +67,57 @@ class FeedProc:
                 #end if element_section
             #end if f_name
         #end for f_name
-    #end __call__
+    #end _run_filters
+    
+    def _gen_modified_feed(self):
+        items = [
+            PyRSS2Gen.RSSItem(
+                title = x.title,
+                link = x.link,
+                description = x.summary,
+                guid = x.link,
+                pubDate = datetime.datetime(
+                    x.modified_parsed[0],
+                    x.modified_parsed[1],
+                    x.modified_parsed[2],
+                    x.modified_parsed[3],
+                    x.modified_parsed[4],
+                    x.modified_parsed[5])
+                )
+
+            for x in self.feed['entries']
+        ]
+        
+        rss = PyRSS2Gen.RSS2(
+            title = self.feed['feed'].get("title"),
+            link = self.feed['feed'].get("link"),
+            description = self.feed['feed'].get("description"),
+
+            language = self.feed['feed'].get("language"),
+            copyright = self.feed['feed'].get("copyright"),
+            managingEditor = self.feed['feed'].get("managingEditor"),
+            webMaster = self.feed['feed'].get("webMaster"),
+            pubDate = self.feed['feed'].get("pubDate"),
+            lastBuildDate = self.feed['feed'].get("lastBuildDate"),
+
+            categories = self.feed['feed'].get("categories"),
+            generator = self.feed['feed'].get("generator"),
+            docs = self.feed['feed'].get("docs"),
+
+            items = items
+        )
+        
+        self.xml = rss.to_xml()
+        return self.xml
+    #end _gen_modified_feed
+        
 #end FeedProc
 
 class AppendToTitle(FeedProc):
     """Simple example processor.
     Appends a string to the start of each feed title."""
     def proc_entries_title(self, title, full_item):
-        return "This is a title modification. %s %s" % (title, full_item['link'])
+        return "This is a title modification. %s" % (title)
 
 def main():
     # Setup the AppendToTitle processor on the reddit python RSS feed
