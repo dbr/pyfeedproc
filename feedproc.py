@@ -94,35 +94,24 @@ class FeedProc:
             for x in self.feed['entries']
         ]
         
-        #rss = PyRSS2Gen.RSS2(
-        #    title = self.feed['feed'].get("title"),
-        #    link = self.feed['feed'].get("link"),
-        #    description = self.feed['feed'].get("description"),
-        #
-        #    language = self.feed['feed'].get("language"),
-        #    copyright = self.feed['feed'].get("copyright"),
-        #    managingEditor = self.feed['feed'].get("managingEditor"),
-        #    webMaster = self.feed['feed'].get("webMaster"),
-        #    pubDate = self.feed['feed'].get("pubDate"),
-        #    lastBuildDate = self.feed['feed'].get("lastBuildDate"),
-        #
-        #    categories = self.feed['feed'].get("categories"),
-        #    generator = self.feed['feed'].get("generator"),
-        #    docs = self.feed['feed'].get("docs"),
-        #
-        #    items = items
-        #)
-        valid_keys = ["title", "link", "description", "language", "copyright",
-        "managingEditor", "webMaster", "pubDate", "lastBuildDate ",
-        "categories", "generator", "docs", "items"]
+        rss = PyRSS2Gen.RSS2(
+            title = self.feed['feed'].get("title"),
+            link = self.feed['feed'].get("link"),
+            description = self.feed['feed'].get("description"),
         
-        # Remove feed elements that PyRSS2Gen doesn't accept
-        cleaned_args = {}
-        for cur_key, cur_val in self.feed['feed'].items():
-            if cur_key in valid_keys:
-                cleaned_args[cur_key] = cur_val
+            language = self.feed['feed'].get("language"),
+            copyright = self.feed['feed'].get("copyright"),
+            managingEditor = self.feed['feed'].get("managingEditor"),
+            webMaster = self.feed['feed'].get("webMaster"),
+            pubDate = self.feed['feed'].get("pubDate"),
+            lastBuildDate = self.feed['feed'].get("lastBuildDate"),
         
-        rss = PyRSS2Gen.RSS2(**cleaned_args)
+            categories = self.feed['feed'].get("categories"),
+            generator = self.feed['feed'].get("generator"),
+            docs = self.feed['feed'].get("docs"),
+        
+            items = items
+        )
         
         self.xml = rss.to_xml()
         return self.xml
