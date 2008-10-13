@@ -28,10 +28,12 @@ The whole system is quite simple. It is intended to remove annoyances from RSS f
 import feedparser
 import PyRSS2Gen
 import datetime
+import re
 
 class FeedProc:
     def __init__(self, url):
         self.url = url
+        self.processor_name_matcher = re.compile("^proc_(.+?)_(.+?)$")
 
     def __call__(self):
         """Runs filter on supplied URL, returns modified feed
@@ -51,11 +53,9 @@ class FeedProc:
         """
         for f_name in dir(self):
             # parse_entries_title
-            if f_name.find("proc_") == 0 and f_name[5:].find("_") > -1:
-                # entries
-                element_section = f_name[5 : f_name[5:].find("_") + 5  ]
-                # title
-                element_name = f_name[f_name[6:].find("_") + 7 : ]
+            check_func = self.processor_name_matcher.match(f_name)
+            if check_func:
+                element_section, element_name = check_func.groups()
                 
                 if element_section in self.feed.keys():
                     for feed_item_index in xrange(len(self.feed['entries'])):
