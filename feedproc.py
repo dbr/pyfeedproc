@@ -84,13 +84,12 @@ class FeedProc:
                         element_section, f_name
                     )
                 #end if element_section
-            #end if f_name
+            #end if check_func
         #end for f_name
     #end _run_filters
     
     def _gen_modified_feed(self):
-        items = [
-            PyRSS2Gen.RSSItem(
+        items = [ PyRSS2Gen.RSSItem(
                 title = x.title,
                 link = x.link,
                 description = x.summary,
@@ -103,7 +102,6 @@ class FeedProc:
                     x.modified_parsed[4],
                     x.modified_parsed[5])
                 )
-
             for x in self.feed['entries']
         ]
         
@@ -111,25 +109,21 @@ class FeedProc:
             title = self.feed['feed'].get("title"),
             link = self.feed['feed'].get("link"),
             description = self.feed['feed'].get("description"),
-        
             language = self.feed['feed'].get("language"),
             copyright = self.feed['feed'].get("copyright"),
             managingEditor = self.feed['feed'].get("managingEditor"),
             webMaster = self.feed['feed'].get("webMaster"),
             pubDate = self.feed['feed'].get("pubDate"),
             lastBuildDate = self.feed['feed'].get("lastBuildDate"),
-        
             categories = self.feed['feed'].get("categories"),
             generator = self.feed['feed'].get("generator"),
             docs = self.feed['feed'].get("docs"),
-        
             items = items
         )
         
         self.xml = rss.to_xml()
         return self.xml
     #end _gen_modified_feed
-        
 #end FeedProc
 
 class AppendToTitle(FeedProc):
