@@ -127,10 +127,10 @@ class AppendToTitle(FeedProc):
 
 def main():
     # Setup the AppendToTitle processor on the reddit python RSS feed
-    af = AppendToTitle("http://reddit.com/r/python/.rss")
+    append_proc = AppendToTitle("http://reddit.com/r/python/.rss")
 
     # Run the processor, it returns a string with the new RSS feed
-    modified_feed = af()
+    modified_feed = append_proc()
 
     # Output the new feed
     print modified_feed
