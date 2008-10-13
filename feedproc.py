@@ -8,21 +8,33 @@
 """
 This is a simple feed-processing framework, written in Python.
 
-Allows you to programatically modify an RSS feed. It uses feedparser to parse the feeds.
+Allows you to programatically modify an RSS feed. It uses feedparser to parse
+ the feeds.
 
-Processors are classes, which inherent the FeedProc class. The processor uses specifically named functions to determine which item to modify. For example, proc_enteries_title will process each feed item's "title".
+Processors are classes, which inherent the FeedProc class. The processor uses
+ specifically named functions to determine which item to modify. For example,
+ proc_enteries_title will process each feed item's "title".
 
-Each function is given two arguments, the first is the original value, the second is the entire element (with entries, this is the entire news <item>).
+Each function is given two arguments, the first is the original value, the
+second is the entire element (with entries, this is the entire news <item>).
 Each function simply returns the desired new value.
 
-As a simple example processor, to truncate every RSS item's title to 20 characters:
+As a simple example processor, to truncate every RSS item's title to 20 
+characters:
+
+
+from feedproc import FeedProc
 
 class ExampleProcessor(FeedProc):
     proc_enteries_title(self, orig_title, full_item):
         truncated_title = orig_title[20:]
         return truncated_title
 
-The whole system is quite simple. It is intended to remove annoyances from RSS feeds, such as adverts, similar to what "Yahoo Pipes" is, but FeedProc is *much* simpler, does not depend on third-party servers proxying, and is much more flexible (it is Python, you can call anything you with form the processor)
+The whole system is quite simple. It is intended to remove annoyances from RSS
+feeds, such as adverts, similar to what "Yahoo Pipes" is, but FeedProc is 
+*much* simpler, does not depend on third-party servers proxying, and is much
+more flexible (it is Python, you can call anything you with form the 
+processor)
 """
 
 import feedparser
