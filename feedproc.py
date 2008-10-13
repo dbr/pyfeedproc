@@ -34,15 +34,21 @@ class FeedProc:
         self.url = url
 
     def __call__(self):
+        """Runs filter on supplied URL, returns modified feed
+        """
         self._parse_feed()
         self._run_filters()
         self._gen_modified_feed()
         return self.xml
 
     def _parse_feed(self):
+        """Parses the feed using feedparser
+        """
         self.feed = feedparser.parse(self.url)
 
     def _run_filters(self):
+        """Runs all proc_ filters
+        """
         for f_name in dir(self):
             # parse_entries_title
             if f_name.find("proc_") == 0 and f_name[5:].find("_") > -1:
