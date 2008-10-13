@@ -37,10 +37,11 @@ more flexible (it is Python, you can call anything you with form the
 processor)
 """
 
-import feedparser
-import PyRSS2Gen
 import datetime
 import re
+
+import feedparser
+import PyRSS2Gen
 
 class FeedProc:
     def __init__(self, url):
