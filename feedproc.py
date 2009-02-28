@@ -32,9 +32,8 @@ class ExampleProcessor(FeedProc):
 
 The whole system is quite simple. It is intended to remove annoyances from RSS
 feeds, such as adverts, similar to what "Yahoo Pipes" is, but FeedProc is 
-*much* simpler, does not depend on third-party servers proxying, and is much
-more flexible (it is Python, you can call anything you with form the 
-processor)
+*much* simpler and does not depend on third-party servers. It is also much
+more flexible (as processors are simple Python classes)
 """
 
 import datetime
